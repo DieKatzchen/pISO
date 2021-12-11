@@ -5,6 +5,7 @@ use std::thread;
 use std::time;
 use sysfs_gpio::{Direction, Pin};
 use error;
+use config;
 
 pub const DISPLAY_WIDTH: usize = 128;
 pub const DISPLAY_HEIGHT: usize = 64;
@@ -63,7 +64,7 @@ pub trait Display {
 }
 
 impl LedDisplay {
-    pub fn new() -> error::Result<Box<Display>> {
+    pub fn new(config: &config::Config) -> error::Result<Box<Display>> {
         let mut spi = Spidev::open("/dev/spidev0.0")?;
         let options = SpidevOptions::new()
             .bits_per_word(8)
@@ -72,11 +73,11 @@ impl LedDisplay {
             .build();
         spi.configure(&options)?;
 
-        let dc_pin = Pin::new(24);
+        let dc_pin = Pin::new(config.pins.dc_pin);
         dc_pin.export()?;
         dc_pin.set_direction(Direction::Out)?;
 
-        let rst_pin = Pin::new(25);
+        let rst_pin = Pin::new(config.pins.rst_pin);
         rst_pin.export()?;
         rst_pin.set_direction(Direction::Out)?;
 

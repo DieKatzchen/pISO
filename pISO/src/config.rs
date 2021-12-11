@@ -59,12 +59,22 @@ pub struct SystemConfig {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+pub struct pinConfig {
+    pub up_input: u64,
+    pub down_input: u64,
+    pub select_input: u64,
+    pub dc_pin: u64,
+    pub rst_pin: u64, 
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     pub user: UserConfig,
     pub wifi: WifiConfig,
     pub ui: UiConfig,
     pub drive: Option<Vec<DriveConfig>>,
     pub system: Option<SystemConfig>,
+    pub pins: pinConfig
 }
 
 #[cfg(test)]
@@ -104,6 +114,13 @@ mod tests {
           ssid="test"
           password="foobar"
 
+          [pins]
+          up_input=21
+          down_input=16
+          select_input=20
+          dc_pin=24
+          rst_pin=25
+
           [wifi.ap]
           ssid="piso"
           password="piso"
@@ -128,6 +145,13 @@ mod tests {
           [wifi.ap]
           ssid="piso"
           password="piso"
+
+          [pins]
+          up_input=21
+          down_input=16
+          select_input=20
+          dc_pin=24
+          rst_pin=25
         "#;
 
         let _: Config = toml::from_str(toml_str).unwrap();

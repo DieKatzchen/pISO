@@ -52,12 +52,20 @@ use std::sync::{Arc, Mutex};
 quick_main!(trap_error);
 
 fn trap_error() -> error::Result<()> {
-    let display = display::LedDisplay::new()?;
+
+    let mut f = fs::File::open("/boot/piso.config").chain_err(|| "config file not found")?;
+    let mut config_contents = String::new();
+    f.read_to_string(&mut config_contents)
+        .expect("unable to read config");
+    let config: config::Config =
+        toml::from_str(&config_contents).chain_err(|| "failed to parse config file")?;
+
+    let display = display::LedDisplay::new(&config)?;
 
     println!("Building display manager");
     let mut manager = displaymanager::DisplayManager::new(display)?;
 
-    let err = run(&mut manager);
+    let err = run(&mut manager, &config);
 
     // Write the error to stdout and update the screen
     match err {
@@ -90,13 +98,8 @@ fn trap_error() -> error::Result<()> {
     panic!("pISO terminated")
 }
 
-fn run(manager: &mut displaymanager::DisplayManager) -> error::Result<()> {
-    let mut f = fs::File::open("/boot/piso.config").chain_err(|| "config file not found")?;
-    let mut config_contents = String::new();
-    f.read_to_string(&mut config_contents)
-        .expect("unable to read config");
-    let config: config::Config =
-        toml::from_str(&config_contents).chain_err(|| "failed to parse config file")?;
+fn run(manager: &mut displaymanager::DisplayManager, config: &config::Config) -> error::Result<()> {
+    
 
     println!("Building USB gadget");
     let gadget = Arc::new(Mutex::new(usb::UsbGadget::new(

@@ -4,6 +4,7 @@ pISO with SH1106 + Joystick support (1.3inch OLED HAT)
 This fork has support for the Waveshare 1.3inch OLED HAT and the Zero Stem.
 
 Left and right directions on the joystick and KEY1-3 are currently not implemented.
+This branch attempts to implement them through the piso.config file
 
 ![Photo](https://raw.githubusercontent.com/No0ne/pISO/master/assets/SH1106.jpg)
 

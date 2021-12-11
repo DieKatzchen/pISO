@@ -40,19 +40,19 @@ pub struct Controller {
 
 impl Controller {
     pub fn new(config: &config::Config) -> error::Result<Controller> {
-        let up_input = Pin::new(6);
+        let up_input = Pin::new(config.pins.up_input);
         up_input.export()?;
         up_input.set_direction(Direction::In)?;
         up_input.set_edge(Edge::BothEdges)?;
         let up_poller = up_input.get_async_poller()?;
 
-        let down_input = Pin::new(19);
+        let down_input = Pin::new(config.pins.down_input);
         down_input.export()?;
         down_input.set_direction(Direction::In)?;
         down_input.set_edge(Edge::BothEdges)?;
         let down_poller = down_input.get_async_poller()?;
 
-        let select_input = Pin::new(13);
+        let select_input = Pin::new(config.pins.select_input);
         select_input.export()?;
         select_input.set_direction(Direction::In)?;
         select_input.set_edge(Edge::BothEdges)?;
